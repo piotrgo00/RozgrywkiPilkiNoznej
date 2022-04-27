@@ -1,0 +1,11 @@
+{% extends 'football_league/base.html' %}
+
+{% block content %}
+    <h5>Players</h5>
+
+    {% for player in team.player_set.all %}
+        <hr>
+        <p>{{ player.name }} {{ player.surname }}</p>
+
+    {% endfor %}
+{% endblock %}
