@@ -32,7 +32,7 @@ class Round(models.Model):
     league = models.ForeignKey(League, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.date
+        return str(self.date)
 
 
 class Match(models.Model):
