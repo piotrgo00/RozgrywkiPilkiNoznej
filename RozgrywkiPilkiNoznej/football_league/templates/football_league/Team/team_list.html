@@ -1,0 +1,10 @@
+{% extends 'football_league/base.html' %}
+
+{% block content %}
+    {% for team in team_list %}
+        <div class="team">
+            <hr>
+            <h3><a href="{% url 'football_league:team_detail' team.id %}">{{ team.name|linebreaksbr }}</a></h3>
+        </div>
+    {% endfor %}
+{% endblock %}
