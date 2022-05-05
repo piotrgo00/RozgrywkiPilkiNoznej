@@ -1,0 +1,61 @@
+{% extends 'football_league/base.html' %}
+{% block content %}
+
+<h2>{{player.name}} {{player.surname}}</h2>
+
+<hr>
+<p>Team - <a href="{% url 'football_league:team_detail' player.team.id %}">{{player.team}}</a></p>
+<p>🎂 - {{ player.birth_date|date:"D d M Y" }} </p>
+
+<hr>
+
+<h3> Match history </h3>
+
+<table class="table table-striped table-hover">
+    <thead class="thead-dark">
+    <tr>
+        <th>Host - Guest</th>
+        <th>Win</th>
+        <th>Goals</th>
+        <th>Shots</th>
+        <th>Y/R cards</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for match in matchHistory %}
+    <tr>
+        <td>{{ match.host }} - {{ match.guest }}</td>
+        <td>
+            {%with host=match.host guest=match.guest team=player.team hostWin=match.did_host_win%}
+            {% if host == team and hostWin or guest == team and not hostWin %}✔
+            {%else%}✖
+            {%endif%}
+            {%endwith%}
+        </td>
+        {%if match in matches%}
+            {%for stat in playerStats%}
+                {%if stat.match == match%}
+                    <td>{{stat.goals}}</td>
+                    <td>{{stat.shots}}</td>
+                    <td>{{stat.yellow_card}}/{%if stat.red_card%}1{%else%}0{%endif%}</td>
+                {%endif%}
+            {%endfor%}
+        {%else%}
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+        {%endif%}
+    </tr>
+    {%endfor%}
+    </tbody>
+</table>
+
+<hr>
+<h3> Player Info </h3>
+<table class="table table-striped table-hover table-sm">
+    <tr><th>Matches played</th> <td>{{ matches|length }}</td></tr>
+{% for key, value in totalStats.items %}
+    <tr><th>{{ key }} </th><td>{{ value }}</td></tr>
+{% endfor %}
+</table>
+{%endblock%}
