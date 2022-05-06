@@ -1,11 +1,11 @@
 {% extends 'football_league/base.html' %}
 
 {% block content %}
-<h2>Log In</h2>
+<h2>Register</h2>
 <p class="text-danger">{{ message }}</p>
 <form method="post" class="form-control">
   {% csrf_token %}
   {{ form.as_p }}
-  <button type="submit" class="btn btn-primary">Log In</button>
+  <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 {% endblock %}
