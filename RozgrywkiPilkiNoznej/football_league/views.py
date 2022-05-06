@@ -65,9 +65,12 @@ class RegisterView(View):
                                     password=password)
                 group = Group.objects.get(name='manager')
                 user.groups.add(group)
+                user.is_active = False
+                user.save()
             if user is not None:
-                login(request, user)
-                return redirect('/')
+                # login(request, user)
+                # return redirect('/')
+                message = 'Admin has to confirm your account'
         return render(request, self.template_name, context={'form': form, 'message': message})
 
 
