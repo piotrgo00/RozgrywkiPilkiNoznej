@@ -1,33 +1,37 @@
 {% extends 'football_league/base.html' %}
 
 {% block content %}
+{% load index %}
+    <h3>{{ team.name }}</h3>
+    <br>
     <h5>Players</h5>
-
+    <table class="table table-hover">
     {% for player in team.player_set.all %}
-        <hr>
-        <p><a href="{% url 'football_league:player_detail' player.id %}">{{ player.name }} {{ player.surname }}</a></p>
-
+        <tr><td><a href="{% url 'football_league:player_detail' player.id %}">{{ player.name }} {{ player.surname }}</a></td></tr>
     {% endfor %}
+    </table>
     <h5>Match history</h5>
     <table class="table table-striped table-hover">
         <thead class="thead-dark">
     <tr>
         <th>Host</th>
         <th>Guest</th>
+        <th>Win</th>
         <th>Result</th>
     </tr>
     </thead>
     <tbody>
     {% for match in matchHistory %}
         <tr>
-            <td><a href="">{{ match.host }} </a></td>
-            <td><a href="">{{ match.guest }} </a></td>
+            <td><a href="{% url 'football_league:team_detail' match.host.id %}">{{ match.host }} </a></td>
+            <td><a href="{% url 'football_league:team_detail' match.guest.id %}">{{ match.guest }} </a></td>
             <td>{%with host=match.host guest=match.guest hostWin=match.did_host_win%}
                 {% if host == team and hostWin or guest == team and not hostWin %}✔
                 {%else%}✖
                 {%endif%}
             {%endwith%}
             </td>
+            <td>{{ matchResults|index:forloop.counter0 }}</td>
         </tr>
     {% endfor %}
     </tbody>
