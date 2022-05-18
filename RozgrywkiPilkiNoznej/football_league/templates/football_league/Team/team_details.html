@@ -2,6 +2,8 @@
 
 {% block content %}
 {% load index %}
+    <h3>{{ team.name }}</h3>
+    <br>
     <h5>Players</h5>
     <table class="table table-hover">
     {% for player in team.player_set.all %}
@@ -21,8 +23,8 @@
     <tbody>
     {% for match in matchHistory %}
         <tr>
-            <td><a href="">{{ match.host }} </a></td>
-            <td><a href="">{{ match.guest }} </a></td>
+            <td><a href="{% url 'football_league:team_detail' match.host.id %}">{{ match.host }} </a></td>
+            <td><a href="{% url 'football_league:team_detail' match.guest.id %}">{{ match.guest }} </a></td>
             <td>{%with host=match.host guest=match.guest hostWin=match.did_host_win%}
                 {% if host == team and hostWin or guest == team and not hostWin %}✔
                 {%else%}✖

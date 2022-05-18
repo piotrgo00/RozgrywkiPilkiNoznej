@@ -110,10 +110,10 @@ class TeamIndexView(generic.ListView):
 class DetailTeamView(generic.DetailView):
     template_name = 'football_league/Team/team_details.html'
     model = Team
+    context_object_name = 'team'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        player = get_object_or_404(Player, pk=self.kwargs['pk'])
-        team = player.team
+        team = get_object_or_404(Team, pk=self.kwargs['pk'])
         match_history = Match.objects.filter(Q(host=team) | Q(guest=team))
         match_results = []
         for match in match_history:
