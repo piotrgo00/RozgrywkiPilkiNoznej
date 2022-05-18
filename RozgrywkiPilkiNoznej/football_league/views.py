@@ -8,6 +8,7 @@ from django.views.generic import View
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.mixins import LoginRequiredMixin
 from . import forms
 # Create your views here.
 
@@ -76,10 +77,23 @@ class RegisterView(View):
 
 class MatchIndexView(generic.ListView):
     template_name = 'football_league/Match/match_list.html'
-    context_object_name = 'match_list'
+    context_object_name = 'data'
 
     def get_queryset(self):
-        return Match.objects.all()
+        match_list = Match.objects.all()
+        match_results = []
+        for match in match_list:
+            result = getMatchResult(match)
+            match_results.append("{} - {}".format(str(result['host']), str(result['guest'])))
+        queryset = {'match_list': match_list,
+                    'match_results': match_results}
+        return queryset
+
+
+class MatchCreateView(generic.edit.CreateView, LoginRequiredMixin):
+    template_name = 'football_league/Match/match_create.html'
+    model = Match
+    fields = ['host', 'guest', 'round', 'did_host_win']
 
 
 class TeamIndexView(generic.ListView):
@@ -96,9 +110,14 @@ class DetailTeamView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         player = get_object_or_404(Player, pk=self.kwargs['pk'])
-        #player = Player.objects.get(pk=self.kwargs['pk'])
         team = player.team
-        context['matchHistory'] = Match.objects.filter(Q(host=team) | Q(guest=team))
+        match_history = Match.objects.filter(Q(host=team) | Q(guest=team))
+        match_results = []
+        for match in match_history:
+            result = getMatchResult(match)
+            match_results.append("{} - {}".format(str(result['host']), str(result['guest'])))
+        context['matchHistory'] = match_history
+        context['matchResults'] = match_results
         return context
 
 class DetailPlayerView(generic.DetailView):
@@ -109,16 +128,38 @@ class DetailPlayerView(generic.DetailView):
         player = get_object_or_404(Player, pk=self.kwargs['pk'])
         team = player.team
         stats = Statistic.objects.filter(player=player)
+        matches = Match.objects.filter(Q(host=team) | Q(guest=team))
         matches_with_stats = []
-        total_stats = {}
+        match_results = []
+        total_stats = getPlayerTotalStats(stats)
         for stat in stats:
             matches_with_stats.append(stat.match)
-            total_stats.update({'Goals': total_stats.get('Goals', 0) + stat.goals})
-            total_stats.update({'Shots': total_stats.get('Shots', 0) + stat.shots})
-            total_stats.update({'Yellow cards': total_stats.get('Yellow cards', 0) + stat.yellow_card})
-            total_stats.update({'Red cards': total_stats.get('Red cards', 0) + (1 if stat.red_card else 0)})
-        context['matchHistory'] = Match.objects.filter(Q(host=team) | Q(guest=team))
+        for match in matches:
+            result = getMatchResult(match)
+            match_results.append("{} - {}".format(str(result['host']), str(result['guest'])))
+        context['matchResults'] = match_results
+        context['matchHistory'] = matches
         context['playerStats'] = stats
         context['matches'] = matches_with_stats
         context['totalStats'] = total_stats
         return context
+
+def getMatchResult(match):
+    stats = Statistic.objects.filter(Q(match=match))
+    goals_host = 0
+    goals_guest = 0
+    for s in stats:
+        if match.host == s.player.team:
+            goals_host += s.goals
+        else:
+            goals_guest += s.goals
+    return {'host': goals_host, 'guest': goals_guest}
+
+def getPlayerTotalStats(stats):
+    total_stats = {}
+    for stat in stats:
+        total_stats.update({'Goals': total_stats.get('Goals', 0) + stat.goals})
+        total_stats.update({'Shots': total_stats.get('Shots', 0) + stat.shots})
+        total_stats.update({'Yellow cards': total_stats.get('Yellow cards', 0) + stat.yellow_card})
+        total_stats.update({'Red cards': total_stats.get('Red cards', 0) + (1 if stat.red_card else 0)})
+    return total_stats

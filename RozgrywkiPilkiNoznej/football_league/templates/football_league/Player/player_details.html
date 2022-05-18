@@ -1,6 +1,6 @@
 {% extends 'football_league/base.html' %}
 {% block content %}
-
+{% load index %}
 <h2>{{player.name}} {{player.surname}}</h2>
 
 <hr>
@@ -9,13 +9,23 @@
 
 <hr>
 
+<h3> Player Info </h3>
+<table class="table table-striped table-hover table-sm">
+    <tr><th>Matches played</th> <td>{{ matches|length }}</td></tr>
+{% for key, value in totalStats.items %}
+    <tr><th>{{ key }} </th><td>{{ value }}</td></tr>
+{% endfor %}
+</table>
 <h3> Match history </h3>
+
+<hr>
 
 <table class="table table-striped table-hover">
     <thead class="thead-dark">
     <tr>
         <th>Host - Guest</th>
         <th>Win</th>
+        <th>Result</th>
         <th>Goals</th>
         <th>Shots</th>
         <th>Y/R cards</th>
@@ -31,6 +41,9 @@
             {%else%}✖
             {%endif%}
             {%endwith%}
+        </td>
+        <td>
+            {{ matchResults|index:forloop.counter0 }}
         </td>
         {%if match in matches%}
             {%for stat in playerStats%}
@@ -50,12 +63,4 @@
     </tbody>
 </table>
 
-<hr>
-<h3> Player Info </h3>
-<table class="table table-striped table-hover table-sm">
-    <tr><th>Matches played</th> <td>{{ matches|length }}</td></tr>
-{% for key, value in totalStats.items %}
-    <tr><th>{{ key }} </th><td>{{ value }}</td></tr>
-{% endfor %}
-</table>
 {%endblock%}

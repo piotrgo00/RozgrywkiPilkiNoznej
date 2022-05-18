@@ -1,6 +1,7 @@
 {% extends 'football_league/base.html' %}
 
 {% block content %}
+{% load index %}
     <h5>Players</h5>
 
     {% for player in team.player_set.all %}
@@ -14,6 +15,7 @@
     <tr>
         <th>Host</th>
         <th>Guest</th>
+        <th>Win</th>
         <th>Result</th>
     </tr>
     </thead>
@@ -28,6 +30,7 @@
                 {%endif%}
             {%endwith%}
             </td>
+            <td>{{ matchResults|index:forloop.counter0 }}</td>
         </tr>
     {% endfor %}
     </tbody>
