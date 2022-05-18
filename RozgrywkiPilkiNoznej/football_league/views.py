@@ -10,7 +10,6 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from . import forms
-# Create your views here.
 
 
 def home(request):
@@ -35,7 +34,7 @@ class LoginPageView(View):
             )
             if user is not None:
                 login(request, user)
-                return redirect('/')
+                return redirect(self.request.GET.get('next', '/'))
         message = 'Login failed!'
         return render(request, self.template_name, context={'form': form, 'message': message})
 
@@ -90,10 +89,14 @@ class MatchIndexView(generic.ListView):
         return queryset
 
 
-class MatchCreateView(generic.edit.CreateView, LoginRequiredMixin):
+class MatchCreateView(LoginRequiredMixin, generic.edit.CreateView):
+    login_url = '/login'
     template_name = 'football_league/Match/match_create.html'
     model = Match
-    fields = ['host', 'guest', 'round', 'did_host_win']
+    fields = '__all__'
+
+    def get_success_url(self):
+        return reverse('football_league:match_index')
 
 
 class TeamIndexView(generic.ListView):
