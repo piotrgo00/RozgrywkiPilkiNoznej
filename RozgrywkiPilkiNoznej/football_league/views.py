@@ -114,6 +114,7 @@ class DetailTeamView(generic.DetailView):
     template_name = 'football_league/Team/team_details.html'
     model = Team
     context_object_name = 'team'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         team = get_object_or_404(Team, pk=self.kwargs['pk'])
@@ -126,9 +127,11 @@ class DetailTeamView(generic.DetailView):
         context['matchResults'] = match_results
         return context
 
+
 class DetailPlayerView(generic.DetailView):
     template_name = 'football_league/Player/player_details.html'
     model = Player
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         player = get_object_or_404(Player, pk=self.kwargs['pk'])
@@ -150,6 +153,7 @@ class DetailPlayerView(generic.DetailView):
         context['totalStats'] = total_stats
         return context
 
+
 def getMatchResult(match):
     stats = Statistic.objects.filter(Q(match=match))
     goals_host = 0
@@ -160,6 +164,7 @@ def getMatchResult(match):
         else:
             goals_guest += s.goals
     return {'host': goals_host, 'guest': goals_guest}
+
 
 def getPlayerTotalStats(stats):
     total_stats = {}
@@ -191,3 +196,44 @@ def getTeamsRanking(team_list):
         team_results.append([team, points, wins + draws + loses, wins, draws, loses])
     team_results.sort(reverse=True, key=lambda r: (r[1], r[2], r[3]))
     return team_results
+
+
+class DetailMatchView(generic.DetailView):
+    template_name = 'football_league/Match/match_details.html'
+    model = Match
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        match = get_object_or_404(Match, pk=self.kwargs['pk'])
+        match_stats = Statistic.objects.filter(match=match)
+        goals_host = 0
+        goals_guest = 0
+        shots_host = 0
+        shots_guest = 0
+        red_card_host = 0
+        red_card_guest = 0
+        yellow_card_host = 0
+        yellow_card_guest = 0
+        for s in match_stats:
+            if match.host == s.player.team:
+                goals_host += s.goals
+                shots_host += s.shots
+                if s.red_card:
+                    red_card_host += 1
+                yellow_card_host += s.yellow_card
+            else:
+                goals_guest += s.goals
+                shots_guest += s.shots
+                if s.red_card:
+                    red_card_guest += 1
+                yellow_card_guest += s.yellow_card
+        context['goals_host'] = goals_host
+        context['shots_host'] = shots_host
+        context['red_card_host'] = red_card_host
+        context['yellow_card_host'] = yellow_card_host
+        context['goals_guest'] = goals_guest
+        context['shots_guest'] = shots_guest
+        context['red_card_guest'] = red_card_guest
+        context['yellow_card_guest'] = yellow_card_guest
+        context['match_stats'] = match_stats
+        return context
