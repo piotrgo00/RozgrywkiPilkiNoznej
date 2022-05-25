@@ -88,16 +88,27 @@ class MatchIndexView(generic.ListView):
                     'match_results': match_results}
         return queryset
 
-"""
-class MatchCreateView(LoginRequiredMixin, generic.edit.CreateView):
-    login_url = '/login'
-    template_name = 'football_league/Match/match_create.html'
-    model = Match
-    fields = '__all__'
 
-    def get_success_url(self):
-        return reverse('football_league:match_index')
-"""
+class MatchCreateView(LoginRequiredMixin, View):
+    template_name = 'football_league/Match/match_create.html'
+    form_class = forms.MatchCreateForm
+
+    def get(self, request):
+        form = self.form_class()
+        message = ''
+        return render(request, self.template_name, context={'form': form, 'message': message})
+
+    def post(self, request):
+        message = 'Action failed!'
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            host = form.cleaned_data['host']
+            guest = form.cleaned_data['guest']
+            round = form.cleaned_data['round']
+            Match.objects.create(host=host, guest=guest, round=round)
+            return redirect('/match')
+        return render(request, self.template_name, context={'form': form, 'message': message})
+
 
 class TeamIndexView(generic.ListView):
     template_name = 'football_league/Team/team_list.html'

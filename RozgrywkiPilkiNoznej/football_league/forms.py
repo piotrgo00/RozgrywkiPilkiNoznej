@@ -15,8 +15,15 @@ class RegisterForm(forms.Form):
     password.widget.attrs.update({'class': 'form-control'})
     confirm_password.widget.attrs.update({'class': 'form-control'})
 
-class MatchCreateForm(forms.ModelForm):
-    class Meta:
-        model = Match
-        result = forms.CharField(max_length=63)
-        exclude = ['did_host_win']
+
+class MatchCreateForm(forms.Form):
+    host = forms.ModelChoiceField(queryset=Team.objects.all(), widget= forms.Select
+                           (attrs={'class':'form-control',}))
+    guest = forms.ModelChoiceField(queryset=Team.objects.all(), widget= forms.Select
+                           (attrs={'class':'form-control'}))
+    round = forms.ModelChoiceField(queryset=Round.objects.all(), widget= forms.Select
+                           (attrs={'class':'form-control',
+                                   'id': 'roundSelect'}))
+
+    def clean(self):
+        super().clean()
