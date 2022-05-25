@@ -2,7 +2,7 @@
 {% block content %}
 {% load index %}
 <h2>{{match.host.name}} - {{match.guest.name}} - {{ match.round.date|date:"D d M Y"|linebreaksbr }}</h2>
-
+<hr>
 <h3> {{match.host.name}} statistics </h3>
 <table class="table table-striped table-hover table-sm">
     <tr><th>Goals</th> <td>{{ goals_host }}</td></tr>
@@ -10,7 +10,30 @@
     <tr><th>Yellow cards</th> <td>{{ yellow_card_host }}</td></tr>
     <tr><th>Red cards</th> <td>{{ red_card_host }}</td></tr>
 </table>
+<hr>
+<h3> {{match.host.name}} players statistics </h3>
+<table class="table table-striped table-hover table-sm">
+    <tr>
+        <th>Player name</th>
+        <th>Goals</th>
+        <th>Shots</th>
+        <th>Yellow cards</th>
+        <th>Red cards</th>
+    </tr>
+    {% for stat in match_stats %}
+    {% if stat.player.team == match.host %}
+    <tr>
+        <td>{{ stat.player }}</td>
+        <td>{{ stat.goals }}</td>
+        <td>{{ stat.shots }}</td>
+        <td>{{ stat.yellow_card }}</td>
+        <td>{% if stat.red_card == True %}✔{% else %}✖{% endif %}</td>
+    </tr>
+    {% endif %}
+{% endfor %}
+</table>
 
+<hr>
 <h3> {{match.guest.name}} statistics </h3>
 <table class="table table-striped table-hover table-sm">
     <tr><th>Goals</th> <td>{{ goals_guest }}</td></tr>
@@ -18,5 +41,26 @@
     <tr><th>Yellow cards</th> <td>{{ yellow_card_guest }}</td></tr>
     <tr><th>Red cards</th> <td>{{ red_card_guest }}</td></tr>
 </table>
-
+<hr>
+<h3> {{match.guest.name}} players statistics </h3>
+<table class="table table-striped table-hover table-sm">
+    <tr>
+        <th>Player name</th>
+        <th>Goals</th>
+        <th>Shots</th>
+        <th>Yellow cards</th>
+        <th>Red cards</th>
+    </tr>
+    {% for stat in match_stats %}
+    {% if stat.player.team == match.guest %}
+    <tr>
+        <td>{{ stat.player }}</td>
+        <td>{{ stat.goals }}</td>
+        <td>{{ stat.shots }}</td>
+        <td>{{ stat.yellow_card }}</td>
+        <td>{% if stat.red_card == True %}✔{% else %}✖{% endif %}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
 {%endblock%}

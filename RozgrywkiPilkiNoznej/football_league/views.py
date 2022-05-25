@@ -180,10 +180,6 @@ class DetailMatchView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         match = get_object_or_404(Match, pk=self.kwargs['pk'])
-        host = match.host
-        guest = match.guest
-        host_players = Player.objects.filter(team=host)
-        guest_players = Player.objects.filter(team=guest)
         match_stats = Statistic.objects.filter(match=match)
         goals_host = 0
         goals_guest = 0
@@ -214,4 +210,5 @@ class DetailMatchView(generic.DetailView):
         context['shots_guest'] = shots_guest
         context['red_card_guest'] = red_card_guest
         context['yellow_card_guest'] = yellow_card_guest
+        context['match_stats'] = match_stats
         return context
