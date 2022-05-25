@@ -19,4 +19,4 @@ class MatchCreateForm(forms.ModelForm):
     class Meta:
         model = Match
         result = forms.CharField(max_length=63)
-        fields = ['host', 'guest', 'round', 'did_host_win']
+        exclude = ['did_host_win']

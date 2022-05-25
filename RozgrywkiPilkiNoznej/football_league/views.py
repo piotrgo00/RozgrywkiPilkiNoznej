@@ -88,7 +88,7 @@ class MatchIndexView(generic.ListView):
                     'match_results': match_results}
         return queryset
 
-
+"""
 class MatchCreateView(LoginRequiredMixin, generic.edit.CreateView):
     login_url = '/login'
     template_name = 'football_league/Match/match_create.html'
@@ -97,7 +97,7 @@ class MatchCreateView(LoginRequiredMixin, generic.edit.CreateView):
 
     def get_success_url(self):
         return reverse('football_league:match_index')
-
+"""
 
 class TeamIndexView(generic.ListView):
     template_name = 'football_league/Team/team_list.html'
@@ -182,12 +182,11 @@ def getTeamsRanking(team_list):
             result = getMatchResult(match)
             if result['host'] == result['guest']:
                 draws += 1
-                points += 1
             elif match.host == team and match.did_host_win or match.guest == team and not match.did_host_win:
                 wins += 1
-                points += 3
             else:
                 loses += 1
+            points = draws + wins * 3
         team_results.append([team, points, wins + draws + loses, wins, draws, loses])
     team_results.sort(reverse=True, key=lambda r: (r[1], r[2], r[3]))
     return team_results
