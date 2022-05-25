@@ -8,7 +8,7 @@
     {% for match in data.match_list %}
         <div class="match">
             <hr>
-            <h5><a href="">{{ match.host }} - {{ match.guest }}</a> ({{ data.match_results|index:forloop.counter0 }})</h5>
+            <h5><a href="{% url 'football_league:match_detail' match.id %}">{{ match.host }} - {{ match.guest }}</a> ({{ data.match_results|index:forloop.counter0 }})</h5>
             <p>{{ match.round.date|date:"D d M Y"|linebreaksbr }}</p>
         </div>
     {% endfor %}
