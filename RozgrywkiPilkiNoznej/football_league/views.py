@@ -101,10 +101,13 @@ class MatchCreateView(LoginRequiredMixin, generic.edit.CreateView):
 
 class TeamIndexView(generic.ListView):
     template_name = 'football_league/Team/team_list.html'
-    context_object_name = 'team_list'
+    context_object_name = 'data'
 
     def get_queryset(self):
-        return Team.objects.all()
+        team_list = Team.objects.all()
+        team_results = getTeamsRanking(team_list)
+        queryset = {'team_results': team_results}
+        return queryset
 
 
 class DetailTeamView(generic.DetailView):
@@ -171,6 +174,28 @@ def getPlayerTotalStats(stats):
         total_stats.update({'Yellow cards': total_stats.get('Yellow cards', 0) + stat.yellow_card})
         total_stats.update({'Red cards': total_stats.get('Red cards', 0) + (1 if stat.red_card else 0)})
     return total_stats
+
+def getTeamsRanking(team_list):
+    team_results = []
+    for team in team_list:
+        match_list = Match.objects.filter(Q(host=team) | Q(guest=team))
+        wins = 0
+        draws = 0
+        loses = 0
+        points = 0
+        for match in match_list:
+            result = getMatchResult(match)
+            if result['host'] == result['guest']:
+                draws += 1
+                points += 1
+            elif match.host == team and match.did_host_win or match.guest == team and not match.did_host_win:
+                wins += 1
+                points += 3
+            else:
+                loses += 1
+        team_results.append([team, points, wins + draws + loses, wins, draws, loses])
+    team_results.sort(reverse=True, key=lambda r: (r[1], r[2], r[3]))
+    return team_results
 
 
 class DetailMatchView(generic.DetailView):
