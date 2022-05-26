@@ -1,11 +1,15 @@
 {% extends 'football_league/base.html' %}
 
 {% block content %}
-    {% for match in match_list %}
+{% load index %}
+    {% if user.is_authenticated %}
+        <p><a class="btn btn-primary btn-lg" href="{% url 'football_league:match_create' %}">Add match</a></p>
+    {% endif %}
+    {% for match in data.match_list %}
         <div class="match">
             <hr>
-            <h3><a href="">{{ match.host }} - {{ match.guest }}</a></h3>
-            <p>{{ match.round.date }} - Host won:{{ match.did_host_win|linebreaksbr }}</p>
+            <h5><a href="{% url 'football_league:match_detail' match.id %}">{{ match.host }} - {{ match.guest }}</a> ({{ data.match_results|index:forloop.counter0 }})</h5>
+            <p>{{ match.round.date|date:"D d M Y"|linebreaksbr }}</p>
         </div>
     {% endfor %}
 {% endblock %}
