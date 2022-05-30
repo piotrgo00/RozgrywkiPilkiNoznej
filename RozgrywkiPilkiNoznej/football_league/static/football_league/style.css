@@ -1,4 +1,9 @@
 .main-body {
     padding-top: 50px;
     font-family: "system-ui";
+    height: 100%;
 }
+.foot{
+    margin-top:auto;
+}
+
