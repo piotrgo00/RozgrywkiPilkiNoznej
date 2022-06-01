@@ -45,7 +45,8 @@ class StatisticCreateForm(forms.Form):
         self.host_team = Match.objects.filter(pk=match_id).first().host
         self.guest_team = Match.objects.filter(pk=match_id).first().guest
         super().__init__(*args, **kwargs)
-        queryset = Player.objects.filter(Q(team=self.host_team) | Q(team=self.guest_team)).order_by('name')
+        queryset = Player.objects.filter(Q(team=self.host_team) | Q(team=self.guest_team))\
+            .exclude(statistic__in=Statistic.objects.filter(match=match_id)).order_by('name')
 
         self.fields['player'] = forms.ModelChoiceField(queryset=queryset,
                                                        widget=forms.Select
