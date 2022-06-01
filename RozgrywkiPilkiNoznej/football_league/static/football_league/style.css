@@ -1,9 +1,13 @@
 .main-body {
-    padding-top: 50px;
-    font-family: "system-ui";
     height: 100%;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    font-family: "system-ui";
 }
 .foot{
     margin-top:auto;
+}
+.form-margin{
+    margin-bottom: 10px;
 }
 

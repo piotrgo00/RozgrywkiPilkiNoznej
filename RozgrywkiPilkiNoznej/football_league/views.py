@@ -91,12 +91,14 @@ class MatchIndexView(generic.ListView):
 
 class MatchCreateView(LoginRequiredMixin, View):
     template_name = 'football_league/Match/match_create.html'
-    form_class = forms.MatchCreateForm
+    # form_class = forms.MatchCreateForm
 
     def get(self, request):
-        form = self.form_class()
+        # form = self.form_class()
         message = ''
-        return render(request, self.template_name, context={'form': form, 'message': message})
+        teams = Team.objects.all()
+        rounds = Round.objects.all()
+        return render(request, self.template_name, context={'teams': teams, 'rounds': rounds,'message': message})
 
     def post(self, request):
         message = 'Action failed!'

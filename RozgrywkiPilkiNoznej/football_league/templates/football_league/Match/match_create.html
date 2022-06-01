@@ -3,7 +3,34 @@
 <h2>Add match</h2>
 <form id="form" method="post" class="form-control">
   {% csrf_token %}
-  {{ form.as_p }}
+  <div class="input-group mb-3">
+    <label class="input-group-text" for="host_id">Host</label>
+    <select class="form-select" name="host" id="host_id" form="form">
+      <option disabled selected value> -- Host -- </option>
+      {% for team in teams %}
+        <option value="{{ team }}">{{ team }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="input-group mb-3">
+    <label class="input-group-text" for="guest_id">Guest</label>
+    <select class="form-select" name="guest" id="guest_id" form="form">
+      <option disabled selected value> -- Guest -- </option>
+      {% for team in teams %}
+        <option value="{{ team }}">{{ team }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="input-group mb-3">
+    <select class="form-select" name="round" id="round_id" form="form">
+      <option disabled selected value> -- Round -- </option>
+      {% for round in rounds %}
+        <option value="{{ round }}">{{ round }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-outline-secondary" type="button">New round</button>
+  </div>
+
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
