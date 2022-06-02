@@ -1,10 +1,62 @@
 {% extends 'football_league/base.html' %}
 {% block content %}
 <h2>Add match</h2>
-<form id="form" method="post" class="form-control">
+<p class="text-danger">{{ message }}</p>
+<form id="form" method="post" class="form-control" name="form">
   {% csrf_token %}
-  {{ form.as_p }}
+  <div class="input-group mb-3">
+    <label class="input-group-text" for="host_id">Host</label>
+    <select class="form-select" name="host" id="host_id" form="form">
+      <option disabled selected value> -- Host -- </option>
+      {% for team in teams %}
+        <option value="{{ team }}">{{ team }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="input-group mb-3">
+    <label class="input-group-text" for="guest_id">Guest</label>
+    <select class="form-select" name="guest" id="guest_id" form="form">
+      <option disabled selected value> -- Guest -- </option>
+      {% for team in teams %}
+        <option value="{{ team }}">{{ team }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="input-group mb-3">
+    <label class="input-group-text" for="guest_id">Round</label>
+    <select class="form-select" name="round" id="round_id" form="form">
+      <option disabled selected value> -- Round -- </option>
+      {% for round in rounds %}
+        <option value="{{ round }}">{{ round }}</option>
+      {% endfor %}
+      <option value="new">-NEW ROUND-</option>
+    </select>
+  </div>
+  <div class="input-group mb-3">
+    <label style="display: none" class="input-group-text" for="datepick_id" id="date_label_id">New Round</label>
+    <input style="display: none" id="datepick_id" name="datepick" type="date" class="form-control">
+  </div>
+
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+<script>
+  let datepicker = document.getElementById('datepick_id');
+  let date_label = document.getElementById('date_label_id')
+  let round_select = document.getElementById('round_id');
 
+  round_select.onchange = roundCheck;
+
+  function roundCheck(){
+    if (round_select.selectedIndex == round_select.length-1) {
+      datepicker.style.display = "block";
+      date_label.style.display = "block";
+    }else{
+      datepicker.style.display = "none";
+      date_label.style.display = "none";
+    }
+  }
+
+
+</script>
 {% endblock %}
+
