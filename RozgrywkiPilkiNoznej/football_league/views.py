@@ -268,3 +268,30 @@ class DetailMatchView(generic.DetailView):
         context['yellow_card_guest'] = yellow_card_guest
         context['match_stats'] = match_stats
         return context
+
+
+class StatisticCreateView(LoginRequiredMixin, View):
+    template_name = 'football_league/Statistic/statistic_create.html'
+    form_class = forms.StatisticCreateForm
+
+    def get(self, request, **kwargs):
+        form = self.form_class(pk=kwargs['pk'])
+        message = ''
+        # match_id = kwargs['pk']
+        return render(request, self.template_name, context={'form': form, 'message': message})
+
+    def post(self, request, **kwargs):
+        message = 'Action failed!'
+        form = self.form_class(kwargs['pk'], request.POST)
+        # match = Match.objects.filter(pk=kwargs['pk'])
+        match = Match.objects.filter(pk=kwargs['pk']).first()
+        if form.is_valid():
+            player = form.cleaned_data['player']
+            goals = form.cleaned_data['goals']
+            shots = form.cleaned_data['shots']
+            red_card = form.cleaned_data['red_card']
+            yellow_card = form.cleaned_data['yellow_card']
+            Statistic.objects.create(player=player, match=match, goals=goals, shots=shots,
+                                     red_card=red_card, yellow_card=yellow_card)
+            return redirect('/match/' + str(match.pk))
+        return render(request, self.template_name, context={'form': form, 'message': message})
