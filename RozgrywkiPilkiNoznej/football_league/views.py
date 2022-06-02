@@ -9,6 +9,8 @@ from django.utils import timezone
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.datastructures import MultiValueDictKeyError
+from django.core.exceptions import ValidationError
 from . import forms
 
 
@@ -91,23 +93,42 @@ class MatchIndexView(generic.ListView):
 
 class MatchCreateView(LoginRequiredMixin, View):
     template_name = 'football_league/Match/match_create.html'
-    form_class = forms.MatchCreateForm
 
     def get(self, request):
-        form = self.form_class()
         message = ''
-        return render(request, self.template_name, context={'form': form, 'message': message})
+        teams = Team.objects.all()
+        rounds = Round.objects.all()
+        return render(request, self.template_name, context={'teams': teams, 'rounds': rounds,'message': message})
 
     def post(self, request):
         message = 'Action failed!'
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            host = form.cleaned_data['host']
-            guest = form.cleaned_data['guest']
-            round = form.cleaned_data['round']
-            Match.objects.create(host=host, guest=guest, round=round)
-            return redirect('/match')
-        return render(request, self.template_name, context={'form': form, 'message': message})
+        teams = Team.objects.all()
+        rounds = Round.objects.all()
+        err = False
+        try:
+            host = Team.objects.get(name=request.POST['host'])
+            guest = Team.objects.get(name=request.POST['guest'])
+            round = request.POST['round']
+        except MultiValueDictKeyError:
+            err = True
+        else:
+            if round == 'new':
+                league = host.league
+                date = request.POST['datepick']
+                try:
+                    round = Round.objects.create(date=date, league=league)
+                except ValidationError:
+                    err = True
+            else:
+                try:
+                    round = Round.objects.get(date=round)
+                except MultiValueDictKeyError:
+                    err = True
+        if err:
+            return render(request, self.template_name,
+                          context={'teams': teams, 'rounds': rounds, 'message': message})
+        Match.objects.create(host=host, guest=guest, round=round)
+        return redirect('/match')
 
 
 class TeamIndexView(generic.ListView):
@@ -247,3 +268,30 @@ class DetailMatchView(generic.DetailView):
         context['yellow_card_guest'] = yellow_card_guest
         context['match_stats'] = match_stats
         return context
+
+
+class StatisticCreateView(LoginRequiredMixin, View):
+    template_name = 'football_league/Statistic/statistic_create.html'
+    form_class = forms.StatisticCreateForm
+
+    def get(self, request, **kwargs):
+        form = self.form_class(pk=kwargs['pk'])
+        message = ''
+        # match_id = kwargs['pk']
+        return render(request, self.template_name, context={'form': form, 'message': message})
+
+    def post(self, request, **kwargs):
+        message = 'Action failed!'
+        form = self.form_class(kwargs['pk'], request.POST)
+        # match = Match.objects.filter(pk=kwargs['pk'])
+        match = Match.objects.filter(pk=kwargs['pk']).first()
+        if form.is_valid():
+            player = form.cleaned_data['player']
+            goals = form.cleaned_data['goals']
+            shots = form.cleaned_data['shots']
+            red_card = form.cleaned_data['red_card']
+            yellow_card = form.cleaned_data['yellow_card']
+            Statistic.objects.create(player=player, match=match, goals=goals, shots=shots,
+                                     red_card=red_card, yellow_card=yellow_card)
+            return redirect('/match/' + str(match.pk))
+        return render(request, self.template_name, context={'form': form, 'message': message})

@@ -63,4 +63,7 @@
     {% endif %}
     {% endfor %}
 </table>
+{% if user.is_authenticated %}
+        <p><a class="btn btn-primary btn-lg" href="{% url 'football_league:statistic_create' match.id %}">Add Statistics</a></p>
+{% endif %}
 {%endblock%}
