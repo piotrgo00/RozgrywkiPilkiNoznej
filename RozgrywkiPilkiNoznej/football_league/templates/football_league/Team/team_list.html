@@ -3,33 +3,34 @@
 {% load index %}
     <div class="team">
             <div class="ptable">
-                <h1 class="headin">Table</h1>
-                    <table class="table table-striped table-hover">
-                        <thead class="thead-dark">
-                        <tr class="text-center">
-                            <th>Team</th>
-                            <th>Points</th>
-                            <th>Matches</th>
-                            <th>Wins</th>
-                            <th>Draws</th>
-                            <th>Loses</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for stat in data.team_results %}
-                        <tr>
-                            {% with team=stat|index:0 %}
-                            <td> <h3><a href="{% url 'football_league:team_detail' team.id %}">{{ team.name|linebreaksbr }}</a></h3> </td>
-                            {% endwith %}
-                            <td class="text-center"><b>{{ stat|index:1 }}</b></td>
-                            <td class="text-center">{{ stat|index:2 }}</td>
-                            <td class="text-center">{{ stat|index:3 }}</td>
-                            <td class="text-center">{{ stat|index:4 }}</td>
-                            <td class="text-center">{{ stat|index:5 }}</td>
-                        </tr>
-                        {% endfor %}
-                         </tbody>
-                    </table>
+                <table class="table table-striped table-hover">
+                    <thead class="thead-dark">
+                    <tr class="text-center">
+                        <th>#</th>
+                        <th>Team</th>
+                        <th>Points</th>
+                        <th>Matches</th>
+                        <th>Wins</th>
+                        <th>Draws</th>
+                        <th>Loses</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for stat in data.team_results %}
+                    <tr>
+                        <td class="text-center"><b>{{ forloop.counter }}</b></td>
+                        {% with team=stat|index:0 %}
+                        <td> <h3><a href="{% url 'football_league:team_detail' team.id %}">{{ team.name|linebreaksbr }}</a></h3> </td>
+                        {% endwith %}
+                        <td class="text-center"><b>{{ stat|index:1 }}</b></td>
+                        <td class="text-center">{{ stat|index:2 }}</td>
+                        <td class="text-center">{{ stat|index:3 }}</td>
+                        <td class="text-center">{{ stat|index:4 }}</td>
+                        <td class="text-center">{{ stat|index:5 }}</td>
+                    </tr>
+                    {% endfor %}
+                     </tbody>
+                </table>
             </div>
             <hr>
         </div>
