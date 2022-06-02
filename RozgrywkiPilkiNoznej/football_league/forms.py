@@ -4,8 +4,8 @@ from django.core.validators import RegexValidator
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=63, min_length=6)
-    password = forms.CharField(max_length=63, min_length=6, widget=forms.PasswordInput)
+    username = forms.CharField(max_length=63, min_length=5)
+    password = forms.CharField(max_length=63, min_length=5, widget=forms.PasswordInput)
     username.widget.attrs.update({'class': 'form-control'})
     password.widget.attrs.update({'class': 'form-control'})
 
