@@ -325,3 +325,19 @@ def get_player_ranking(player_list):
         player_results.append([player, goals, shots, yellow_cards, red_cards])
     player_results.sort(reverse=True, key=lambda r: (r[1], r[2]))
     return player_results
+
+
+class StatisticUpdateView(generic.UpdateView):
+    model = Statistic
+    fields = ['goals', 'shots', 'yellow_card', 'red_card']
+    template_name = 'football_league/Statistic/statistic_update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        statistic = get_object_or_404(Statistic, pk=self.kwargs['pk'])
+        context['statistic'] = statistic
+        return context
+
+    def get_success_url(self):
+        statistic = get_object_or_404(Statistic, pk=self.kwargs['pk'])
+        return reverse('football_league:match_detail', kwargs={'pk': statistic.match.id})

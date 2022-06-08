@@ -1,0 +1,8 @@
+{% extends 'football_league/base.html' %}
+{% block content %}
+<h2>{{ statistic.player.name }} {{ statistic.player.surname }} - {{ statistic.match }}</h2>
+<form id="form" method="post" class="form-control" name="form">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Update">
+</form>
+{% endblock %}

@@ -19,6 +19,9 @@
         <th>Shots</th>
         <th>Yellow cards</th>
         <th>Red cards</th>
+        {% if user.is_authenticated %}
+        <th></th>
+        {% endif %}
     </tr>
     {% for stat in match_stats %}
     {% if stat.player.team == match.host %}
@@ -28,6 +31,9 @@
         <td>{{ stat.shots }}</td>
         <td>{{ stat.yellow_card }}</td>
         <td>{% if stat.red_card == True %}✔{% else %}✖{% endif %}</td>
+        {% if user.is_authenticated %}
+        <td><a href="{% url 'football_league:statistic_update' stat.id %}">Edit</a></td>
+        {% endif %}
     </tr>
     {% endif %}
 {% endfor %}
@@ -50,6 +56,9 @@
         <th>Shots</th>
         <th>Yellow cards</th>
         <th>Red cards</th>
+        {% if user.is_authenticated %}
+        <th></th>
+        {% endif %}
     </tr>
     {% for stat in match_stats %}
     {% if stat.player.team == match.guest %}
@@ -59,6 +68,9 @@
         <td>{{ stat.shots }}</td>
         <td>{{ stat.yellow_card }}</td>
         <td>{% if stat.red_card == True %}✔{% else %}✖{% endif %}</td>
+        {% if user.is_authenticated %}
+        <td><a href="{% url 'football_league:statistic_update' stat.id %}">Edit</a></td>
+        {% endif %}
     </tr>
     {% endif %}
     {% endfor %}

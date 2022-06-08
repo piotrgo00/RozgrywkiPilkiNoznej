@@ -1,5 +1,6 @@
 from django.core.validators import RegexValidator
 from django.db import models
+from django.urls import reverse
 
 
 class League(models.Model):
@@ -40,6 +41,9 @@ class Match(models.Model):
     guest = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="guest")
     round = models.ForeignKey(Round, on_delete=models.CASCADE)
     did_host_win = models.BooleanField(default=True)
+
+    def __str__(self):
+        return str(self.host) + " - " + str(self.guest) + " " + str(self.round)
 
 
 class Statistic(models.Model):

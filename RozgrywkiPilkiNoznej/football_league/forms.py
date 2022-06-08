@@ -54,3 +54,9 @@ class StatisticCreateForm(forms.Form):
                                                        widget=forms.Select
                                                        (attrs={'class': 'form-control'}))
 
+
+class StatisticUpdateForm(forms.Form):
+    goals = forms.IntegerField(max_value=15, min_value=0)
+    shots = forms.IntegerField(max_value=30, min_value=0)
+    yellow_card = forms.IntegerField(max_value=2, min_value=0)
+    red_card = forms.BooleanField(required=False)
