@@ -295,3 +295,33 @@ class StatisticCreateView(LoginRequiredMixin, View):
                                      red_card=red_card, yellow_card=yellow_card)
             return redirect('/match/' + str(match.pk))
         return render(request, self.template_name, context={'form': form, 'message': message})
+
+
+class PlayerIndexView(generic.ListView):
+    template_name = 'football_league/Player/player_list.html'
+    context_object_name = 'data'
+
+    def get_queryset(self):
+        player_list = Player.objects.all()
+        player_results = get_player_ranking(player_list)
+        queryset = {'player_results': player_results}
+        return queryset
+
+
+def get_player_ranking(player_list):
+    player_results = []
+    for player in player_list:
+        statistic_list = Statistic.objects.filter(player=player)
+        goals = 0
+        shots = 0
+        yellow_cards = 0
+        red_cards = 0
+        for stat in statistic_list:
+            goals += stat.goals
+            shots += stat.shots
+            yellow_cards += stat.yellow_card
+            if stat.red_card:
+                red_cards += 1
+        player_results.append([player, goals, shots, yellow_cards, red_cards])
+    player_results.sort(reverse=True, key=lambda r: (r[1], r[2]))
+    return player_results

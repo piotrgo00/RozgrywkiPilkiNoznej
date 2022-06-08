@@ -14,5 +14,6 @@ urlpatterns = [
     path('team/', views.TeamIndexView.as_view(), name='team_index'),
     path('team/<int:pk>/', views.DetailTeamView.as_view(), name='team_detail'),
     path('player/<int:pk>/', views.DetailPlayerView.as_view(), name='player_detail'),
+    path('player/', views.PlayerIndexView.as_view(), name='player_index'),
     path('statistic/create/<int:pk>/', views.StatisticCreateView.as_view(), name='statistic_create')
 ]
