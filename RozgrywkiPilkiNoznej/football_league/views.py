@@ -341,3 +341,28 @@ class StatisticUpdateView(generic.UpdateView):
     def get_success_url(self):
         statistic = get_object_or_404(Statistic, pk=self.kwargs['pk'])
         return reverse('football_league:match_detail', kwargs={'pk': statistic.match.id})
+
+
+class RoundIndexView(generic.ListView):
+    template_name = 'football_league/Round/round_list.html'
+    context_object_name = 'data'
+
+    def get_queryset(self):
+        queryset = Round.objects.all()
+        return queryset
+
+
+class DetailRoundView(generic.ListView):
+    template_name = 'football_league/Round/round_details.html'
+    context_object_name = 'data'
+
+    def get_queryset(self, **kwargs):
+        round = get_object_or_404(Round, pk=self.kwargs['pk'])
+        match_list = Match.objects.filter(round=round)
+        match_results = []
+        for match in match_list:
+            result = getMatchResult(match)
+            match_results.append("{} - {}".format(str(result['host']), str(result['guest'])))
+        queryset = {'match_list': match_list,
+                    'match_results': match_results}
+        return queryset

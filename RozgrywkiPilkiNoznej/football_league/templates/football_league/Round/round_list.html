@@ -1,0 +1,11 @@
+{% extends 'football_league/base.html' %}
+
+{% block content %}
+{% load index %}
+    {% for round in data %}
+        <div class="match">
+            <hr>
+            <h5><a href="{% url 'football_league:round_detail' round.id %}">{{ round.league }} - {{ round.date|date:"D d M Y"|linebreaksbr }}</a></h5>
+        </div>
+    {% endfor %}
+{% endblock %}
